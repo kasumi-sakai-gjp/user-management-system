@@ -1,5 +1,6 @@
 // components/RegisterForm.tsx
 
+import { createUser } from "@/utils/api";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -29,18 +30,25 @@ const RegisterForm: React.FC = (props: RegisterFormProps) => {
   } = useForm<RegisterFormInputs>();
 
   // 登録実行
-  // const onSubmit = () => {
-  //   createUser()
-  // }
+  const execSubmit = async (formData: RegisterFormInputs) => {
+    try {
+      console.log('formData', formData);
+      const response = await createUser(formData);
+      console.log('response', response);
+      if (props.onSuccess) props.onSuccess();
+    } catch (err) {
+      console.log('ユーザーの取得に失敗しました。', err);
+      if (props.onError) props.onError(err);
+    } 
+  };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto", mt: 4 }}>
+    <Box sx={{ maxWidth: 400, mx: "auto", mt: 4, textAlign: 'center' }}>
       <Typography  variant="h5" gutterBottom>
         新規登録
       </Typography>
 
-      {/* TODO: createUserを呼び出す為の関数を呼び出す必要がある */}
-      <form onSubmit={handleSubmit(props.onSuccess!, props.onError)}>
+      <form onSubmit={handleSubmit(execSubmit)}>
         <TextField label="User Name" sx={{m: 2}} {
           ...register('name', {required: '名前を入力してください'})
         }></TextField>
