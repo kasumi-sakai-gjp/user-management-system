@@ -2,7 +2,7 @@
 
 import { createUser } from "@/utils/api";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 // 必要に応じて利用する
@@ -14,14 +14,20 @@ interface RegisterFormInputs {
 
 // データ登録時ページ遷移情報
 interface RegisterFormProps {
- onSuccess?: () => void;
- onError?: (error: any) => void;
- disabled?: boolean;
+ onSuccess: () => void;
+ onError: (error: any) => void;
+ disabled: boolean;
 }
 
+const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => {
 
-// TODO: 新規登録フォームコンポーネントを実装する
-const RegisterForm: React.FC = (props: RegisterFormProps) => {
+  // 登録ボタン連続押下防止
+  const [registerBtnDistabled, setRegisterBtnDistabled] = useState<boolean>(false);
+
+  useEffect(() => {
+    setRegisterBtnDistabled(props.disabled);
+  }, []);
+
   // 必要に応じて利用する
   const {
     register,
@@ -31,14 +37,14 @@ const RegisterForm: React.FC = (props: RegisterFormProps) => {
 
   // 登録実行
   const execSubmit = async (formData: RegisterFormInputs) => {
+    setRegisterBtnDistabled(true);
     try {
-      console.log('formData', formData);
-      const response = await createUser(formData);
-      console.log('response', response);
-      if (props.onSuccess) props.onSuccess();
+      await createUser(formData);
+      props.onSuccess(); 
     } catch (err) {
-      console.log('ユーザーの取得に失敗しました。', err);
-      if (props.onError) props.onError(err);
+      props.onError(err);
+      // ボタンを再押下可能に
+      setRegisterBtnDistabled(false);
     } 
   };
 
@@ -68,7 +74,7 @@ const RegisterForm: React.FC = (props: RegisterFormProps) => {
           <Typography color='error'>{errors.role.message}</Typography>
         )}
         <Box sx={{m: 3}}>
-          <Button variant="contained" disabled={props.disabled} type="submit">登録</Button>
+          <Button variant="contained" disabled={registerBtnDistabled} type="submit">登録</Button>
         </Box>
       </form>
     </Box>
