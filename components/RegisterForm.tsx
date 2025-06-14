@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 // 必要に応じて利用する
-interface RegisterFormInputs {
+export interface RegisterFormInputs {
   name: string;
   email: string;
   role: string;
@@ -14,7 +14,7 @@ interface RegisterFormInputs {
 
 // データ登録時ページ遷移情報
 interface RegisterFormProps {
- onSuccess: () => void;
+ onSuccess: (formData: RegisterFormInputs) => void;
  onError: (error: any) => void;
  disabled: boolean;
 }
@@ -39,8 +39,10 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
   const execSubmit = async (formData: RegisterFormInputs) => {
     setRegisterBtnDistabled(true);
     try {
+      // エラー時動確用コード
+      // throw new Error("意図的なエラー発生")
       await createUser(formData);
-      props.onSuccess(); 
+      props.onSuccess(formData); 
     } catch (err) {
       props.onError(err);
       // ボタンを再押下可能に
