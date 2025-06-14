@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import RegisterForm, { type RegisterFormInputs } from '../../components/RegisterForm';
 
-// TODO: 新規登録ページを実装し、RegisterFormコンポーネントを使用する
 const RegisterPage: React.FC = () => {
 
   const router = useRouter()
